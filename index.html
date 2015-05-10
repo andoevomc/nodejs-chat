@@ -1,0 +1,177 @@
+﻿<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    
+    <title>EvoMC Chat Live Demo</title>
+
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <link href="assets/css/font-awesome.css" rel="stylesheet" />
+    <link href="assets/css/style.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="container">
+        <div class="row pad-top pad-bottom">
+
+
+            <div class=" col-lg-6 col-md-6 col-sm-6">
+                <div class="chat-box-div">
+                    <div class="chat-box-head">
+                        CONVERSATION
+                            <div class="btn-group pull-right">
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <span class="fa fa-cog"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="#"><span class="fa fa-map-marker"></span>&nbsp;Invisible</a></li>
+                                    <li><a href="#"><span class="fa fa-comments-o"></span>&nbsp;Online</a></li>
+                                    <li><a href="#"><span class="fa fa-lock"></span>&nbsp;Busy</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#"><span class="fa fa-circle-o-notch"></span>&nbsp;Logout</a></li>
+                                </ul>
+                            </div>
+                    </div>
+                    <div class="panel-body chat-box-main" id="messages">
+                        <div class="chat-box-left">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </div>
+                        <div class="chat-box-name-left">
+                            <img src="assets/img/user1.png" alt="user image" class="img-circle" />
+                            -  Joseph Do
+                        </div>
+                        <hr class="hr-clas" />
+                        <div class="chat-box-right">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </div>
+                        <div class="chat-box-name-right">
+                            <img src="assets/img/user2.png" alt="user image" class="img-circle" />
+                            - Tan Nguyen
+                        </div>
+                        <hr class="hr-clas" />
+                    </div>
+                    <div class="chat-box-footer">
+                        <form id="chatform" action="">
+                            <div class="input-group">
+                                    <input id="inputText" autocomplete="off" class="form-control" placeholder="Enter your text here!">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-info" type="submit">SEND</button>
+                                    </span>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <div class="chat-box-online-div">
+                    <div class="chat-box-online-head">
+                        ONLINE USERS (2)
+                    </div>
+                    <div class="panel-body chat-box-online">
+
+                        <div class="chat-box-online-left">
+                            <img src="assets/img/user1.png" alt="user image" class="img-circle" />
+                            -  Joseph Do
+                            <br />
+                            ( <small>Active from 3 hours</small> )
+                        </div>
+                        <hr class="hr-clas-low" />
+
+                        <div class="chat-box-online-right">
+                            <img src="assets/img/user2.png" alt="user image" class="img-circle" />
+                            -  Tan Nguyen
+                            <br />
+                            ( <small>Active from 10 hours</small> )
+                        </div>
+                        <hr class="hr-clas-low" />
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <div class="chat-box-new-div">
+                    <div class="chat-box-new-head">
+                        NEW CHATS (2)
+                    </div>
+                    <div class="panel-body chat-box-new">
+
+
+                        <img src="assets/img/user1.png" alt="user image" class="img-circle" />
+                        (@josephdo)
+                           
+                            <hr class="hr-clas-low" />
+
+
+                        <img src="assets/img/user2.png" alt="user image" class="img-circle" />
+                        (@tannguyen)
+                              
+                            <hr class="hr-clas-low" />
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery-1.11.1.js"></script>
+    <script src="assets/js/enscroll-0.6.1.min.js"></script>
+    <script src="assets/js/socket.io-1.2.0.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+    
+    <script>
+      var socket = io();
+
+      var messages = $('#messages');
+
+      var chatform = $('#chatform');
+
+      var isFromMe = false;
+
+      $('#messages').enscroll({
+            showOnHover: false,
+            verticalTrackClass: 'track3',
+            verticalHandleClass: 'handle3'
+      });
+
+      chatform.submit(function(){
+        var msg = $('#inputText').val();
+        socket.emit('chat message', msg);
+        $('#inputText').val('');
+        return false;
+      });
+
+      socket.on('chat message', function(msg){
+        var position = "right";
+
+        if(true === isFromMe) {
+            position = 'left';
+        }
+
+        var chatMsgBox = $('<div class="chat-box-' + position + '">');
+        chatMsgBox.text(msg);
+        messages.append(chatMsgBox)
+        
+        var chatNameBox = $('<div class="chat-box-name-' + position + '">');
+        var userImage = $('<img src="assets/img/user1.png" alt="user image" class="img-circle">');
+        chatNameBox.text(' -  Joseph Do');
+        chatNameBox.prepend(userImage);
+        messages.append(chatNameBox);
+
+        var hrLine = $('<hr class="hr-clas">');
+        messages.append(hrLine);
+
+        messages.scrollTop(messages[0].scrollHeight);
+      });
+    </script>
+</body>
+
+</html>
